@@ -652,8 +652,8 @@ authForm.addEventListener("submit", async (event) => {
 
         if (result.error) throw result.error;
         if (isSignUpMode && result.data.user && !result.data.session) {
-            showAuthMessage("Account created. Check your email to confirm your address, then log in.", "success");
             setAuthMode(false);
+            showAuthMessage("Account created. Check your email to confirm your address, then log in.", "success");
         } else {
             showAuthMessage(isSignUpMode ? "Account created successfully." : "Login successful.", "success");
         }
