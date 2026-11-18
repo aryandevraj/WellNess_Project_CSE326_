@@ -132,7 +132,20 @@ input[type="text"], input[type="email"], input[type="tel"], input[type="number"]
 input[type="radio"], input[type="checkbox"] { margin-right: 6px; }
 input:focus, select:focus, textarea:focus { outline: 3px solid #9fd8bd; border-color: var(--green); }
 input:invalid:not(:placeholder-shown) { border-color: #c0392b; }
+
 form .btn { margin-top: 16px; }
+
+/* Account authentication */
+.auth-panel { max-width: 620px; margin: 24px auto; padding: 24px; background: white; border-radius: 8px; box-shadow: 0 2px 8px #ddd; }
+.auth-panel h3 { color: var(--green); margin-bottom: 8px; }
+.auth-panel .auth-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+.auth-panel .secondary-btn { background: var(--dark); }
+.auth-panel [hidden] { display: none !important; }
+.auth-status { margin-top: 12px; min-height: 24px; font-weight: bold; }
+.auth-status.error { color: #a33; }
+.auth-status.success { color: var(--green); }
+.auth-help { font-size: 13px; color: #555; margin-top: 10px; }
+
 
 .notice { background: var(--amber); padding: 18px; border-radius: 6px; max-width: 800px; margin: 20px auto 0; }
 .steps { max-width: 620px; margin: 0 auto 24px; padding-left: 24px; }
@@ -166,6 +179,7 @@ footer a { color: white; margin: 0 8px; }
         <a href="#schedule">Schedule</a>
         <a href="#reminders">Reminders</a>
         <a href="#register">Register</a>
+        <a href="#account">Account</a>
         <a href="#safety">Safety</a>
         <a href="#about">About</a>
         <a href="#contact">Contact</a>
@@ -180,6 +194,37 @@ footer a { color: white; margin: 0 8px; }
     <p>Find local walks, yoga, meditation, support groups and community programs.</p>
     <a href="#activities" class="btn">Browse activities</a>
     <p><strong>Popular:</strong> Walking, Meditation, Yoga, Gardening</p>
+</section>
+
+<section id="account" class="tint">
+    <h2>WellNest Account</h2>
+    <p>Create an account or sign in to access your WellNest account.</p>
+    <div class="auth-panel">
+        <div id="authSignedOut">
+            <h3 id="authFormTitle">Create your account</h3>
+            <form id="authForm" novalidate>
+                <label for="authEmail">Email address</label>
+                <input type="email" id="authEmail" autocomplete="email" placeholder="you@example.com" required>
+                <label for="authPassword">Password</label>
+                <input type="password" id="authPassword" autocomplete="new-password" minlength="8" placeholder="At least 8 characters" required>
+                <div id="confirmPasswordWrap">
+                    <label for="authConfirmPassword">Confirm password</label>
+                    <input type="password" id="authConfirmPassword" autocomplete="new-password" minlength="8" placeholder="Enter password again">
+                </div>
+                <div class="auth-actions">
+                    <button type="submit" class="btn" id="authSubmit">Sign up</button>
+                    <button type="button" class="btn secondary-btn" id="authToggle">I already have an account</button>
+                </div>
+            </form>
+            <p class="auth-help">Passwords are handled by Supabase Authentication. Do not reuse an important password.</p>
+        </div>
+        <div id="authSignedIn" hidden>
+            <h3>You're signed in</h3>
+            <p>Signed in as <strong id="authUserEmail"></strong></p>
+            <button type="button" class="btn secondary-btn" id="authLogout">Log out</button>
+        </div>
+        <p id="authStatus" class="auth-status" role="status" aria-live="polite"></p>
+    </div>
 </section>
 
 <section id="activities">
@@ -504,7 +549,133 @@ footer a { color: white; margin: 0 8px; }
     <p>&copy; 2026 WellNest. Demo project - sample data only.</p>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+/*
+ * Supabase setup:
+ * Replace both placeholders with your project's Project URL and publishable
+ * (anon) key. Never put a service_role key in browser code.
+ */
+const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL";
+const SUPABASE_ANON_KEY = "YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY";
+
+const authForm = document.getElementById("authForm");
+const authEmail = document.getElementById("authEmail");
+const authPassword = document.getElementById("authPassword");
+const authConfirmPassword = document.getElementById("authConfirmPassword");
+const confirmPasswordWrap = document.getElementById("confirmPasswordWrap");
+const authFormTitle = document.getElementById("authFormTitle");
+const authSubmit = document.getElementById("authSubmit");
+const authToggle = document.getElementById("authToggle");
+const authStatus = document.getElementById("authStatus");
+const authSignedOut = document.getElementById("authSignedOut");
+const authSignedIn = document.getElementById("authSignedIn");
+const authUserEmail = document.getElementById("authUserEmail");
+const authLogout = document.getElementById("authLogout");
+
+let isSignUpMode = true;
+let supabaseClient = null;
+
+function showAuthMessage(message, type) {
+    authStatus.textContent = message;
+    authStatus.className = "auth-status" + (type ? " " + type : "");
+}
+
+function setAuthMode(signUp) {
+    isSignUpMode = signUp;
+    authFormTitle.textContent = signUp ? "Create your account" : "Welcome back";
+    authSubmit.textContent = signUp ? "Sign up" : "Log in";
+    authToggle.textContent = signUp ? "I already have an account" : "Create a new account";
+    confirmPasswordWrap.hidden = !signUp;
+    authPassword.autocomplete = signUp ? "new-password" : "current-password";
+    authConfirmPassword.required = signUp;
+    authConfirmPassword.value = "";
+    showAuthMessage("", "");
+}
+
+function renderAuthSession(session) {
+    const signedIn = Boolean(session && session.user);
+    authSignedOut.hidden = signedIn;
+    authSignedIn.hidden = !signedIn;
+    authUserEmail.textContent = signedIn ? (session.user.email || "Account") : "";
+}
+
+authToggle.addEventListener("click", () => setAuthMode(!isSignUpMode));
+
+function initializeSupabaseAuth() {
+    if (!window.supabase || SUPABASE_URL.includes("YOUR_") || SUPABASE_ANON_KEY.includes("YOUR_")) {
+        showAuthMessage("Authentication setup required: add your Supabase Project URL and publishable/anon key in index.html. See SUPABASE_SETUP.md.", "error");
+        authSubmit.disabled = true;
+        return;
+    }
+
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+    });
+
+    supabaseClient.auth.getSession().then(({ data, error }) => {
+        if (error) showAuthMessage(error.message, "error");
+        renderAuthSession(data ? data.session : null);
+    });
+
+    supabaseClient.auth.onAuthStateChange((_event, session) => renderAuthSession(session));
+}
+
+authForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!supabaseClient) {
+        showAuthMessage("Authentication is not configured yet. Follow SUPABASE_SETUP.md.", "error");
+        return;
+    }
+
+    const email = authEmail.value.trim();
+    const password = authPassword.value;
+    if (!email || !password) {
+        showAuthMessage("Enter your email and password.", "error");
+        return;
+    }
+    if (password.length < 8) {
+        showAuthMessage("Use a password with at least 8 characters.", "error");
+        return;
+    }
+    if (isSignUpMode && password !== authConfirmPassword.value) {
+        showAuthMessage("The passwords do not match.", "error");
+        return;
+    }
+
+    authSubmit.disabled = true;
+    showAuthMessage(isSignUpMode ? "Creating your account..." : "Signing you in...", "");
+    try {
+        const result = isSignUpMode
+            ? await supabaseClient.auth.signUp({ email, password })
+            : await supabaseClient.auth.signInWithPassword({ email, password });
+
+        if (result.error) throw result.error;
+        if (isSignUpMode && result.data.user && !result.data.session) {
+            showAuthMessage("Account created. Check your email to confirm your address, then log in.", "success");
+            setAuthMode(false);
+        } else {
+            showAuthMessage(isSignUpMode ? "Account created successfully." : "Login successful.", "success");
+        }
+        authForm.reset();
+    } catch (error) {
+        showAuthMessage(error.message || "Authentication failed. Please try again.", "error");
+    } finally {
+        authSubmit.disabled = false;
+    }
+});
+
+authLogout.addEventListener("click", async () => {
+    if (!supabaseClient) return;
+    authLogout.disabled = true;
+    const { error } = await supabaseClient.auth.signOut();
+    authLogout.disabled = false;
+    if (error) showAuthMessage(error.message, "error");
+    else showAuthMessage("You have been logged out.", "success");
+});
+
+initializeSupabaseAuth();
+
 const siteName = "WellNest";
 
 const activity1 = { name: "Sunrise Riverside Walk", seats: 25 };
