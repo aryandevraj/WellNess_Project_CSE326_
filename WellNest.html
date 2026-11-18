@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="WellNest is a community directory of non-clinical wellness activities: walks, yoga, meditation, support groups and community programs.">
+<title>WellNest - Community Wellness Activity Directory</title>
+
+<style>
+:root {
+    --green: #16865b;
+    --dark: #164b37;
+    --mint: #dff5e9;
+    --page: #f5f9f6;
+    --amber: #fff3cd;
+    --text: #2b2b2b;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: Georgia, serif;
+    background: var(--page);
+    color: var(--text);
+    line-height: 1.6;
+}
+
+h1, h2, h3, nav, button, label, th { font-family: Arial, sans-serif; }
+
+header {
+    background: white;
+    padding: 14px 6%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    box-shadow: 0 2px 6px #ccc;
+}
+
+.logo { display: flex; align-items: center; gap: 8px; color: var(--green); font-size: 24px; font-weight: bold; }
+
+nav { display: flex; flex-wrap: wrap; gap: 14px; }
+nav a { color: var(--text); text-decoration: none; font-size: 14px; }
+nav a:hover, nav a:focus { color: var(--green); text-decoration: underline; }
+
+a[href^="#"] { transition: color 0.3s; }
+
+.hero {
+    background: var(--mint);
+    text-align: center;
+    padding: 80px 6%;
+    animation: fadeIn 1.2s ease-in;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .hero { animation: none; } }
+
+.hero h1 { font-size: 44px; color: var(--green); }
+.hero h2 { font-weight: normal; margin: 8px 0 18px; }
+.hero p { margin-bottom: 18px; }
+
+.btn {
+    display: inline-block;
+    background: var(--green);
+    color: white;
+    padding: 11px 20px;
+    border: none;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+.btn:hover, .btn:focus { background: #0f5f41; }
+
+section { padding: 50px 6%; }
+section > h2 { color: var(--green); text-align: center; font-size: 30px; margin-bottom: 8px; }
+section > p { text-align: center; max-width: 700px; margin: 0 auto 24px; }
+
+.wrap { max-width: 1100px; margin: auto; }
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    border-top: 4px solid var(--green);
+    box-shadow: 0 2px 8px #ddd;
+    transition: transform 0.3s;
+}
+.card:hover { transform: translateY(-4px); }
+.card h3 { color: var(--green); margin-bottom: 6px; }
+.card p { margin: 5px 0; font-size: 15px; }
+
+.tag { font-size: 13px; color: var(--dark); background: var(--mint); padding: 2px 10px; border-radius: 12px; }
+.full { color: #a33; font-weight: bold; }
+.access::before { content: "Access: "; font-weight: bold; }
+
+.table-box { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; background: white; }
+caption { padding: 8px; font-style: italic; }
+th, td { padding: 10px; border: 1px solid #cfe3d8; text-align: left; font-size: 15px; }
+th { background: var(--green); color: white; }
+tbody tr:nth-child(even) { background: var(--page); }
+
+form {
+    background: white;
+    max-width: 620px;
+    margin: auto;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px #ddd;
+}
+fieldset { border: none; }
+legend { font-family: Arial, sans-serif; font-weight: bold; color: var(--green); font-size: 20px; margin-bottom: 8px; }
+label { display: block; margin-top: 12px; font-weight: bold; font-size: 14px; }
+input[type="text"], input[type="email"], input[type="tel"], input[type="number"], select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 4px;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    font-size: 15px;
+}
+input[type="radio"], input[type="checkbox"] { margin-right: 6px; }
+input:focus, select:focus, textarea:focus { outline: 3px solid #9fd8bd; border-color: var(--green); }
+input:invalid:not(:placeholder-shown) { border-color: #c0392b; }
+form .btn { margin-top: 16px; }
+
+.notice { background: var(--amber); padding: 18px; border-radius: 6px; max-width: 800px; margin: 20px auto 0; }
+.steps { max-width: 620px; margin: 0 auto 24px; padding-left: 24px; }
+.alt { background: white; }
+.tint { background: var(--mint); }
+
+footer { background: var(--dark); color: white; text-align: center; padding: 30px 6%; }
+footer a { color: white; margin: 0 8px; }
+
+@media (max-width: 700px) {
+    .hero h1 { font-size: 32px; }
+    header { flex-direction: column; }
+    nav { justify-content: center; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+                <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
+            <path d="M4 26 C4 10 14 4 26 4 C26 16 20 26 4 26 Z" fill="#16865b"/>
+            <path d="M4 26 L18 12" stroke="white" stroke-width="2" fill="none"/>
+        </svg>
+        WellNest
+    </div>
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#activities">Activities</a>
+        <a href="#schedule">Schedule</a>
+        <a href="#reminders">Reminders</a>
+        <a href="#register">Register</a>
+        <a href="#safety">Safety</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+    </nav>
+</header>
+
+<main>
+
+<section class="hero" id="home">
+    <h1>Discover Wellness.</h1>
+    <h2>Connect with your community.</h2>
+    <p>Find local walks, yoga, meditation, support groups and community programs.</p>
+    <a href="#activities" class="btn">Browse activities</a>
+    <p><strong>Popular:</strong> Walking, Meditation, Yoga, Gardening</p>
+</section>
+
+<section id="activities">
+    <h2>Community Activities</h2>
+    <p>Every activity shows its location, time, organizer and accessibility details.</p>
+    <div class="wrap grid">
+
+        <article class="card">
+            <span class="tag">Meditation</span>
+            <h3>Lunchtime Mindful Breathing</h3>
+            <p>A 30-minute guided pause for busy workdays.</p>
+            <p>Location: Civic Center Garden Pavilion</p>
+            <p>Thu 19 Nov 2026, 12:15 PM</p>
+            <p>Host: Aiko Tanaka</p>
+            <p class="access">Chair seating available</p>
+            <p>Seats left: 30</p>
+        </article>
+
+        <article class="card">
+            <span class="tag">Walking Group</span>
+            <h3>Sunrise Riverside Walk</h3>
+            <p>An easy-paced 4 km walk along the river.</p>
+            <p>Location: Riverside Park, North Gate</p>
+            <p>Fri 20 Nov 2026, 7:00 AM</p>
+            <p>Host: Daniel Okafor</p>
+            <p class="access">Step-free path</p>
+            <p>Seats left: 25</p>
+        </article>
+
+        <article class="card">
+            <span class="tag">Support Group</span>
+            <h3>Peer Connection Circle</h3>
+            <p>A welcoming peer-led sharing space.</p>
+            <p>Location: Oakwood Community Library</p>
+            <p>Sat 21 Nov 2026, 6:30 PM</p>
+            <p>Host: Priya Raman</p>
+            <p class="access">Quiet room and seating</p>
+            <p>Seats left: 12</p>
+        </article>
+
+        <article class="card">
+            <span class="tag">Yoga</span>
+            <h3>Gentle Chair Yoga</h3>
+            <p>Slow and supported yoga for all ages.</p>
+            <p>Location: Eastside Community Center</p>
+            <p>Sun 22 Nov 2026, 10:00 AM</p>
+            <p>Host: Maria Alvarez</p>
+            <p class="access">Chair yoga available</p>
+            <p>Seats left: 20</p>
+        </article>
+
+        <article class="card">
+            <span class="tag">Support Group</span>
+            <h3>Caregivers Coffee and Conversation</h3>
+            <p>A friendly meet-up for family carers.</p>
+            <p>Location: Riverbend Community Corner</p>
+            <p>Mon 23 Nov 2026, 10:30 AM</p>
+            <p>Host: Priya Raman</p>
+            <p class="access">Seating available</p>
+            <p>Seats left: 10</p>
+        </article>
+
+        <article class="card">
+            <span class="tag">Community Program</span>
+            <h3>Community Garden Morning</h3>
+            <p>Plant, weed and harvest with neighbours.</p>
+            <p>Location: Greenway Community Garden</p>
+            <p>Tue 24 Nov 2026, 9:00 AM</p>
+            <p>Host: Samuel Brooks</p>
+            <p class="access">Tools and gloves provided</p>
+            <p>Seats left: 25</p>
+        </article>
+
+        <article class="card">
+            <span class="tag">Yoga</span>
+            <h3>Sunset Flow Yoga</h3>
+            <p>An all-levels outdoor yoga session.</p>
+            <p>Location: Greenway Park, Main Lawn</p>
+            <p>Wed 25 Nov 2026, 5:00 PM</p>
+            <p>Host: Maria Alvarez</p>
+            <p class="access">Mats available</p>
+            <p>Seats left: 35</p>
+        </article>
+
+        <article class="card">
+            <span class="tag">Meditation</span>
+            <h3>Evening Sound and Stillness</h3>
+            <p>Guided relaxation with singing bowls.</p>
+            <p>Location: Still Point Studio</p>
+            <p>Thu 26 Nov 2026, 7:00 PM</p>
+            <p>Host: Aiko Tanaka</p>
+            <p class="access">Quiet space available</p>
+            <p>Seats left: 16</p>
+        </article>
+
+        <article class="card">
+            <span class="tag">Walking Group</span>
+            <h3>Old Town Heritage Walk</h3>
+            <p>A gentle 3 km historic walking tour.</p>
+            <p>Location: Old Town Clock Tower</p>
+            <p>Fri 27 Nov 2026, 3:00 PM</p>
+            <p>Host: Daniel Okafor</p>
+            <p class="access">Easy-paced route</p>
+            <p>Seats left: 30</p>
+        </article>
+
+        <article class="card">
+            <span class="tag">Community Program</span>
+            <h3>Board Games and Tea Social</h3>
+            <p>Board games, tea and friendly conversation.</p>
+            <p>Location: Riverbend Library Community Hall</p>
+            <p>Sat 28 Nov 2026, 2:00 PM</p>
+            <p>Host: Lena Fischer</p>
+            <p class="access">Accessible community hall</p>
+            <p class="full">Fully booked</p>
+        </article>
+
+    </div>
+</section>
+
+<section id="schedule" class="alt">
+    <h2>Activity Schedule</h2>
+    <p>Upcoming activities in date order.</p>
+    <div class="wrap table-box">
+        <table>
+            <caption>Schedule of community wellness activities (sample data)</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Time</th>
+                    <th scope="col">Activity</th>
+                    <th scope="col">Location</th>
+                    <th scope="col">Seats</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>19 Nov</td><td>12:15 PM</td><td>Lunchtime Mindful Breathing</td><td>Civic Center Garden Pavilion</td><td>30</td></tr>
+                <tr><td>20 Nov</td><td>7:00 AM</td><td>Sunrise Riverside Walk</td><td>Riverside Park</td><td>25</td></tr>
+                <tr><td>21 Nov</td><td>6:30 PM</td><td>Peer Connection Circle</td><td>Oakwood Community Library</td><td>12</td></tr>
+                <tr><td>22 Nov</td><td>10:00 AM</td><td>Gentle Chair Yoga</td><td>Eastside Community Center</td><td>20</td></tr>
+                <tr><td>23 Nov</td><td>10:30 AM</td><td>Caregivers Coffee and Conversation</td><td>Riverbend Community Corner</td><td>10</td></tr>
+                <tr><td>24 Nov</td><td>9:00 AM</td><td>Community Garden Morning</td><td>Greenway Community Garden</td><td>25</td></tr>
+                <tr><td>25 Nov</td><td>5:00 PM</td><td>Sunset Flow Yoga</td><td>Greenway Park</td><td>35</td></tr>
+                <tr><td>26 Nov</td><td>7:00 PM</td><td>Evening Sound and Stillness</td><td>Still Point Studio</td><td>16</td></tr>
+                <tr><td>27 Nov</td><td>3:00 PM</td><td>Old Town Heritage Walk</td><td>Old Town Clock Tower</td><td>30</td></tr>
+                <tr><td>28 Nov</td><td>2:00 PM</td><td>Board Games and Tea Social</td><td>Riverbend Library Community Hall</td><td>Fully booked</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section id="reminders" class="tint">
+    <h2>Activity Reminders</h2>
+    <p>Choose an activity and when you would like to be reminded.</p>
+    <form action="#" method="get">
+        <fieldset>
+            <legend>Reminder request</legend>
+
+            <label for="remActivity">Activity</label>
+            <select id="remActivity" name="activity">
+                <option>Lunchtime Mindful Breathing</option>
+                <option>Sunrise Riverside Walk</option>
+                <option>Peer Connection Circle</option>
+                <option>Gentle Chair Yoga</option>
+                <option>Caregivers Coffee and Conversation</option>
+                <option>Community Garden Morning</option>
+                <option>Sunset Flow Yoga</option>
+                <option>Evening Sound and Stillness</option>
+                <option>Old Town Heritage Walk</option>
+            </select>
+
+            <label>Remind me</label>
+            <label><input type="radio" name="when" value="1day" checked>1 day before</label>
+            <label><input type="radio" name="when" value="3hours">3 hours before</label>
+            <label><input type="radio" name="when" value="1hour">1 hour before</label>
+
+            <label for="remEmail">Email for reminder</label>
+            <input type="email" id="remEmail" name="email" placeholder="you@example.com" required>
+
+            <button type="submit" class="btn">Set reminder</button>
+        </fieldset>
+    </form>
+</section>
+
+<section id="register">
+    <h2>Join an Activity</h2>
+    <p>Register your spot and tell organizers about any accessibility needs.</p>
+    <form action="#" method="get">
+        <fieldset>
+            <legend>Registration form</legend>
+
+            <label for="fullName">Full name *</label>
+            <input type="text" id="fullName" name="fullName" placeholder="Enter your name" required minlength="2">
+
+            <label for="email">Email address *</label>
+            <input type="email" id="email" name="email" placeholder="you@example.com" required>
+
+            <label for="phone">Phone number *</label>
+            <input type="tel" id="phone" name="phone" placeholder="10-digit number" pattern="[0-9]{10}" title="Enter a 10-digit phone number" required>
+
+            <label for="people">Number of participants *</label>
+            <input type="number" id="people" name="people" min="1" max="6" value="1" required>
+
+            <label for="regActivity">Activity *</label>
+            <select id="regActivity" name="activity" required>
+                <option>Lunchtime Mindful Breathing</option>
+                <option>Sunrise Riverside Walk</option>
+                <option>Peer Connection Circle</option>
+                <option>Gentle Chair Yoga</option>
+                <option>Caregivers Coffee and Conversation</option>
+                <option>Community Garden Morning</option>
+                <option>Sunset Flow Yoga</option>
+                <option>Evening Sound and Stillness</option>
+                <option>Old Town Heritage Walk</option>
+                <option disabled>Board Games and Tea Social (fully booked)</option>
+            </select>
+
+            <label for="access">Accessibility requirements</label>
+            <textarea id="access" name="access" rows="3" placeholder="Wheelchair access, seating, quiet space, support companion..."></textarea>
+
+            <label><input type="checkbox" name="agree" required>I understand WellNest does not provide medical advice.</label>
+
+            <button type="submit" class="btn">Submit registration</button>
+        </fieldset>
+    </form>
+</section>
+
+<section id="safety" class="alt">
+    <h2>Safety and Moderation</h2>
+    <p>Every report is reviewed by a WellNest moderator.</p>
+
+    <ol class="steps">
+        <li>You report an activity using the form below.</li>
+        <li>A moderator reads the report and checks the listing.</li>
+        <li>The listing is corrected, paused or removed if it breaks our guidelines.</li>
+    </ol>
+
+    <form action="#" method="get">
+        <fieldset>
+            <legend>Report an activity</legend>
+
+            <label for="repActivity">Activity name</label>
+            <select id="repActivity" name="activity">
+                <option>Lunchtime Mindful Breathing</option>
+                <option>Sunrise Riverside Walk</option>
+                <option>Peer Connection Circle</option>
+                <option>Gentle Chair Yoga</option>
+                <option>Caregivers Coffee and Conversation</option>
+                <option>Community Garden Morning</option>
+                <option>Sunset Flow Yoga</option>
+                <option>Evening Sound and Stillness</option>
+                <option>Old Town Heritage Walk</option>
+                <option>Board Games and Tea Social</option>
+            </select>
+
+            <label for="reason">Reason for report</label>
+            <select id="reason" name="reason">
+                <option>Incorrect information</option>
+                <option>Unsafe activity</option>
+                <option>Inappropriate content</option>
+                <option>Accessibility concern</option>
+                <option>Other</option>
+            </select>
+
+            <label for="details">Details</label>
+            <textarea id="details" name="details" rows="3" placeholder="Explain your concern..." required></textarea>
+
+            <button type="submit" class="btn">Send report</button>
+        </fieldset>
+    </form>
+
+    <div class="notice">
+        <h3>Important safety disclaimer</h3>
+        <p>WellNest is a community activity directory. It does not give medical advice, diagnosis or treatment. WellNest cannot respond to emergencies. If you or someone else is in immediate danger, call your local emergency number.</p>
+    </div>
+</section>
+
+<section id="about">
+    <h2>About WellNest</h2>
+    <p>WellNest helps neighbours find local, non-clinical wellness activities such as walking groups, meditation, yoga, peer circles and gardening. Our goal is social connection, everyday movement and healthy routines.</p>
+    <div class="wrap grid">
+        <div class="card"><h3>Local first</h3><p>Activities close to home.</p></div>
+        <div class="card"><h3>Accessible</h3><p>Accessibility details on every listing.</p></div>
+        <div class="card"><h3>Safe and respectful</h3><p>Community guidelines and moderation.</p></div>
+        <div class="card"><h3>Free or low cost</h3><p>Affordable community activities.</p></div>
+    </div>
+</section>
+
+<section id="contact" class="tint">
+    <h2>Contact Us</h2>
+    <p>Questions about an activity or this directory? Write to us.</p>
+    <form action="#" method="get">
+        <fieldset>
+            <legend>Send a message</legend>
+
+            <label for="cName">Name</label>
+            <input type="text" id="cName" name="name" required>
+
+            <label for="cEmail">Email</label>
+            <input type="email" id="cEmail" name="email" required>
+
+            <label for="cMsg">Message</label>
+            <textarea id="cMsg" name="message" rows="4" required></textarea>
+
+            <button type="submit" class="btn">Send message</button>
+        </fieldset>
+    </form>
+</section>
+
+</main>
+
+<footer>
+    <h2>WellNest</h2>
+    <p>Helping neighbours discover welcoming, community-led wellness activities.</p>
+    <p>
+        <a href="#home">Home</a>
+        <a href="#activities">Activities</a>
+        <a href="#schedule">Schedule</a>
+        <a href="#register">Register</a>
+        <a href="#contact">Contact</a>
+    </p>
+    <p>&copy; 2026 WellNest. Demo project - sample data only.</p>
+</footer>
+
+<script>
+const siteName = "WellNest";
+
+const activity1 = { name: "Sunrise Riverside Walk", seats: 25 };
+const activity2 = { name: "Board Games and Tea Social", seats: 0 };
+const activities = [activity1, activity2];
+
+function seatMessage(activity) {
+    let message;
+    if (activity.seats > 0) {
+        message = activity.name.toUpperCase() + ": " + activity.seats + " seats left";
+    } else {
+        message = activity.name.toUpperCase() + ": fully booked";
+    }
+    return message;
+}
+
+console.log(siteName + " has " + activities.length + " sample activities");
+console.log(seatMessage(activities[0]));
+console.log(seatMessage(activities[1]));
+</script>
+
+</body>
+</html>
